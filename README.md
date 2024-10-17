@@ -27,9 +27,9 @@ IoT/
 │   └── platformio.ini
 │
 └── README.md
-``` 
+```
 
-### Descripción general de las carpetas:
+### Descripción general de las carpetas
 
 - **`include/`**: Archivos de cabecera y configuraciones adicionales del proyecto.
 - **`lib/`**: Librerías personalizadas o externas utilizadas en el proyecto.
@@ -39,7 +39,7 @@ IoT/
 
 ## Descripción
 
-Este proyecto de IoT tiene como objetivo [incluir aquí el propósito general del proyecto, como por ejemplo monitoreo de sensores, control remoto de dispositivos, etc.]. 
+Este proyecto de IoT tiene como objetivo [incluir aquí el propósito general del proyecto, como por ejemplo monitoreo de sensores, control remoto de dispositivos, etc.].
 
 Cada entrega representa una fase del desarrollo del proyecto:
 
@@ -51,17 +51,20 @@ Cada entrega representa una fase del desarrollo del proyecto:
 Para ejecutar este proyecto en tu propio entorno, sigue estos pasos:
 
 1. **Clona el repositorio**:
+
     ```bash
     git clone https://github.com/hugocis/IoT.git
     cd IoT
     ```
 
 2. **Selecciona la entrega con la que quieres trabajar** (por ejemplo, `Entrega1` o `Entrega2`):
+
     ```bash
     cd Entrega1  # o Entrega2 según tu elección
     ```
 
 3. **Instala las dependencias necesarias** usando PlatformIO:
+
     ```bash
     platformio run
     ```
@@ -69,11 +72,13 @@ Para ejecutar este proyecto en tu propio entorno, sigue estos pasos:
 4. **Configura el hardware**: Asegúrate de que tu hardware esté conectado correctamente.
 
 5. **Sube el código a tu dispositivo IoT**:
+
     ```bash
     platformio upload
     ```
 
 6. **Monitorea la salida del dispositivo** (si es necesario):
+
     ```bash
     platformio device monitor
     ```
