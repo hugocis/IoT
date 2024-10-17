@@ -123,7 +123,7 @@ Las contribuciones son bienvenidas. Si deseas colaborar en este proyecto, puedes
 
 ## Licencia
 
-Este proyecto está licenciado bajo la licencia [MIT o la que prefieras]. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está licenciado bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
 
 ## Contacto
 
