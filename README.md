@@ -2,6 +2,19 @@
 
 ¡Bienvenido/a al **proyecto IoT**! Este repositorio contiene dos entregas principales de proyectos de Internet de las Cosas (IoT). Cada entrega tiene su propia estructura de directorios y archivos. El proyecto está desarrollado utilizando **PlatformIO** junto con **VS Code** como entorno de desarrollo.
 
+## Índice
+
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Descripción](#descripción)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Requisitos](#requisitos)
+  - [Hardware](#hardware)
+  - [Software](#software)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
+  
 ## Estructura del proyecto
 
 La estructura general del proyecto es la siguiente:
