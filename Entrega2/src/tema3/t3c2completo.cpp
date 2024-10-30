@@ -1,3 +1,19 @@
+/*
+ * ======================================================================================
+ * Proyecto:      Conjunto 2 - Interfaces de Periféricos
+ * Descripción:   Este programa implementa un sistema que ajusta el brillo de un LED 
+ *                según la luz ambiental medida con un sensor LDR, y monitoriza el 
+ *                movimiento usando el módulo MPU6050. El sistema:
+ *                   - Toma muestras de luz cada 10 ms y ajusta el brillo del LED.
+ *                   - Envía lecturas del sensor a la consola serie cada segundo.
+ *                   - Activa una alarma en la consola si detecta movimiento y luz baja.
+ * Autores:       Hugo Cisneros, Alicia García, Alfonso Moreno y Fernando Teba
+ * Asignatura:    Interfaces de Periféricos
+ * Nota:          Este código sigue un modelo de programación por estados y evita el uso 
+ *                de delays para asegurar un funcionamiento eficiente y non-blocking.
+ * ======================================================================================
+ */
+
 #include <Arduino.h>
 #include <Ticker.h>
 #include <Wire.h>
@@ -15,6 +31,15 @@ MPU6050 mpu;                                 // Crear un objeto MPU6050
 int ldrValue = 0;                            // Variable para almacenar el valor del LDR
 bool movimientoDetectado = false;            // Para verificar si hay movimiento
 
+// Definir los estados de la máquina de estados
+enum Estado {
+  IDLE,              // Espera, cuando no se detectan condiciones
+  MONITOREO_LUZ,     // Estado de monitoreo de luz
+  ALARMA             // Estado de alarma
+};
+
+Estado estadoActual = IDLE;  // Estado inicial
+
 // Función que toma muestras del LDR y ajusta el brillo del LED
 void sampleLDR() {
   ldrValue = analogRead(ldrPin);  // Leer el valor del LDR (0-1023)
@@ -28,11 +53,6 @@ void sendSerialData() {
   // Enviar la lectura del LDR a la consola
   Serial.print("LDR Value: ");
   Serial.println(ldrValue);
-
-  // Si el nivel de luz es bajo y hay movimiento, activar alarma
-  if (ldrValue < 512 && movimientoDetectado) {
-    Serial.println("¡Alarma! Luz baja y movimiento detectado.");
-  }
 }
 
 // Función que detecta movimiento desde el MPU6050
@@ -52,6 +72,42 @@ void detectarMovimiento() {
   axPrev = ax;
   ayPrev = ay;
   azPrev = az;
+}
+
+// Función para gestionar la máquina de estados
+void gestionarEstados() {
+  switch (estadoActual) {
+    case IDLE:
+      // Cambiar al estado de monitoreo de luz si se detecta movimiento o se activa LDR
+      if (ldrValue > 0) {
+        estadoActual = MONITOREO_LUZ;
+      }
+      break;
+
+    case MONITOREO_LUZ:
+      // Ajustar brillo del LED según la luz detectada
+      sampleLDR();
+
+      // Si el nivel de luz es bajo y se detecta movimiento, cambiar a estado de alarma
+      if (ldrValue < 512 && movimientoDetectado) {
+        estadoActual = ALARMA;
+      }
+      break;
+
+    case ALARMA:
+      // Enviar mensaje de alarma y mantener LED encendido
+      Serial.println("¡Alarma! Luz baja y movimiento detectado.");
+      
+      // Mantener el LED encendido como indicador de alarma
+      digitalWrite(ledPin, HIGH);
+
+      // Retornar a IDLE si las condiciones de alarma ya no se cumplen
+      if (ldrValue >= 512 || !movimientoDetectado) {
+        digitalWrite(ledPin, LOW); // Apagar LED
+        estadoActual = IDLE;
+      }
+      break;
+  }
 }
 
 void setup() {
@@ -80,5 +136,5 @@ void setup() {
 }
 
 void loop() {
-  // El bucle principal no hace nada, todo se maneja con los tickers
+  gestionarEstados();  // Llamar a la función de gestión de estados en cada iteración del bucle principal
 }

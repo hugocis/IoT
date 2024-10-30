@@ -2,7 +2,7 @@
 // Proyecto: Control de brillo de un LED con efecto de fundido y detección de pulsación de botón a través de estados.
 // Autor: Hugo Cisneros Amengual, 4ºA IoT
 // -----------------------------------------------------------------------------------------------------
-
+#include <arduino.h>  
 #include <Ticker.h>  // Librería para manejar el temporizador Ticker
 
 // -----------------------------------------------------------------------------------------------------
