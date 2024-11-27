@@ -100,7 +100,7 @@ void setup()
 {
   // Inicializa el monitor serie
   Serial.begin(115200);
-  Serial.println("Iniciando sistema...");
+  // Serial.println("Iniciando sistema...");
 
   // Configura el pin del LED como salida
   pinMode(ledPin, OUTPUT);
