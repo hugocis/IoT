@@ -1,4 +1,4 @@
-/*
+// /*
  * ======================================================================================
  * Proyecto:      Conjunto 3 - Comunicación por Sockets 
  * Autores:       Hugo Cisneros, Alicia García, Alfonso Moreno y Fernando Teba
@@ -15,7 +15,7 @@ const char* ssid = "RUT_A836_2G";
 const char* password = "iot_wifi_2g"; 
 
 // Configuración del servidor TCP
-const char* server = "10.10.0.161";
+const char* server = "10.10.0.180";
 const uint16_t port = 17010;
 
 WiFiClient client;
