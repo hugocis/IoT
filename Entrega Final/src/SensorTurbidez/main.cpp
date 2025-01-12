@@ -1,20 +1,57 @@
 #include <Arduino.h>
-#define TURBIDITY_PIN 34  // Pin al que conectaste el sensor (GPIO34)
+#define TURBIDITY_PIN 34
+
+const int numReadings = 30;
+int readings[numReadings];
+int readIndex = 0;
+long total = 0;
+float average = 0;
+
+enum Estado { ESPERANDO, LEYENDO, ACTUALIZANDO, CALCULANDO, IMPRIMIENDO };
+Estado estadoActual = ESPERANDO;
+
+float voltage = 0.0;
 
 void setup() {
-  Serial.begin(115200); // Inicializa el monitor serie
-  pinMode(TURBIDITY_PIN, INPUT); // Configura el pin como entrada
+  Serial.begin(115200);
+  pinMode(TURBIDITY_PIN, INPUT);
+
+  for (int i = 0; i < numReadings; i++) {
+    readings[i] = 0;
+  }
 }
 
 void loop() {
-  int sensorValue = analogRead(TURBIDITY_PIN); // Lee el valor analógico del sensor
-  float voltage = sensorValue * (3.3 / 4095.0); // Convierte el valor a voltaje (para ESP32, resolución ADC de 12 bits)
-  
-  // Imprime el valor analógico y el voltaje en el monitor serie
-  Serial.print("Analog Value: ");
-  Serial.print(sensorValue);
-  Serial.print(" | Voltage: ");
-  Serial.println(voltage);
-  
-  delay(1000); // Espera 1 segundo antes de la siguiente lectura
+  switch (estadoActual) {
+    case ESPERANDO:
+      estadoActual = LEYENDO;
+      break;
+
+    case LEYENDO:
+      readings[readIndex] = analogRead(TURBIDITY_PIN);
+      estadoActual = ACTUALIZANDO;
+      break;
+
+    case ACTUALIZANDO:
+      total -= readings[readIndex];
+      total += readings[readIndex];
+      readIndex = (readIndex + 1) % numReadings;
+      estadoActual = CALCULANDO;
+      break;
+
+    case CALCULANDO:
+      // Transformación: cálculo del promedio de las lecturas y conversión a voltaje
+      average = total / numReadings;
+      voltage = average * (3.3 / 4095.0);
+      estadoActual = IMPRIMIENDO;
+      break;
+
+    case IMPRIMIENDO:
+      Serial.print("Average Analog Value: ");
+      Serial.print(average);
+      Serial.print(" | Voltage: ");
+      Serial.println(voltage);
+      estadoActual = ESPERANDO;
+      break;
+  }
 }

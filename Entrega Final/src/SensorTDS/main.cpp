@@ -1,35 +1,45 @@
 #include <Arduino.h>
-#define TDS_PIN 35 // Pin ADC para conectar AOUT del sensor
+#define TDS_PIN 35
 
-// Configuración de parámetros
-const float TdsFactor = 0.5;  // Factor de conversión TDS
-const int VREF = 3300;        // Voltaje de referencia en mV (3.3V)
+const float TdsFactor = 0.5; // Factor de conversión TDS
+const int VREF = 3300; // Voltaje de referencia en mV (3.3V)
 const int ADC_RESOLUTION = 4095; // Resolución ADC del ESP32 (12 bits)
+
+enum Estado { ESPERANDO, LEYENDO, CALCULANDO, IMPRIMIENDO };
+Estado estadoActual = ESPERANDO;
+
+int analogValue = 0;
+float voltage = 0.0;
+float tdsValue = 0.0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(TDS_PIN, INPUT); // Configura el pin como entrada
+  pinMode(TDS_PIN, INPUT);
   Serial.println("Sensor TDS conectado. Leyendo valores...");
 }
 
 void loop() {
-  // Leer el valor analógico del pin
-  int analogValue = analogRead(TDS_PIN);
-  
-  // Convertir a voltaje en mV
-  float voltage = (analogValue * VREF) / ADC_RESOLUTION;
+  switch (estadoActual) {
+    case ESPERANDO:
+      estadoActual = LEYENDO;
+      break;
 
-  // Calcular TDS en ppm
-  float tdsValue = (voltage / TdsFactor) * 1000;
+    case LEYENDO:
+      analogValue = analogRead(TDS_PIN);
+      estadoActual = CALCULANDO;
+      break;
 
-  // Imprimir resultados
-  Serial.print("Valor Analógico: ");
-  Serial.println(analogValue);
-  Serial.print("Voltaje (mV): ");
-  Serial.println(voltage);
-  Serial.print("TDS (ppm): ");
-  Serial.println(tdsValue);
-  Serial.println("-----------------------");
-  
-  delay(1000); // Esperar 1 segundo antes de la siguiente lectura
+    case CALCULANDO:
+      // Transformación: convierte el valor ADC a voltaje en mV y calcula TDS en ppm
+      voltage = (analogValue * VREF) / ADC_RESOLUTION;
+      tdsValue = (voltage / TdsFactor) * 1000;
+      estadoActual = IMPRIMIENDO;
+      break;
+
+    case IMPRIMIENDO:
+      Serial.print("TDS (ppm): ");
+      Serial.println(tdsValue);
+      estadoActual = ESPERANDO;
+      break;
+  }
 }
